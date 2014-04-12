@@ -13,10 +13,12 @@ HAND_VALUES = [ :royal_flush,
                 :high_card]
 
 class Hand
-  attr_accessor :hand, :deck
+  attr_accessor :hand, :deck, :value_array
+
   def initialize(deck)
     @hand = []
     @deck = deck
+    @value_array = []
   end
 
   def deal!
@@ -43,6 +45,27 @@ class Hand
   end
 
 
+  def beats?(their_hand)
+    our_hand_value = HAND_VALUES.index(self.type_of_hand)
+    their_hand_value = HAND_VALUES.index(their_hand.type_of_hand)
+
+    if our_hand_value == their_hand_value
+      self.value_array.length.times do |i|
+        if self.value_array[i] > their_hand.value_array[i]
+          return true
+        elsif self.value_array[i] < their_hand.value_array[i]
+          return false
+        end
+      end
+      return nil
+    else
+      our_hand_value < their_hand_value
+    end
+  end
+
+
+
+
   def generate_card_multiples
     cards_hash = Hash.new(0)
     @hand.each do |card|
@@ -58,7 +81,7 @@ class Hand
       remaining_cards = @hand.select { |card| card.numeric_value != high_card}
       remaining_cards.map! { |card| card = card.numeric_value}
       remaining_cards.sort!.reverse!
-      remaining_cards.unshift(high_card)
+      @value_array = remaining_cards.unshift(high_card)
     else
       false
     end
@@ -71,7 +94,7 @@ class Hand
       remaining_cards = @hand.select { |card| card.numeric_value != high_card}
       remaining_cards.map! { |card| card = card.numeric_value}
       remaining_cards.sort!.reverse!
-      remaining_cards.unshift(high_card)
+      @value_array = remaining_cards.unshift(high_card)
     else
       false
     end
@@ -85,7 +108,7 @@ class Hand
       high_card = NUMERIC_VALUE_HASH[cards_hash.key(3)]
       remaining_cards = @hand.select { |card| card.numeric_value != high_card}
       remaining_cards.map! { |card| card = card.numeric_value}
-      remaining_cards = [high_card, remaining_cards[0]]
+      @value_array = remaining_cards = [high_card, remaining_cards[0]]
     else
       false
     end
@@ -103,7 +126,7 @@ class Hand
       pair_hand_vals.sort!.reverse!
       last_card = @hand.select { |card| !pair_vals.include? (card.value)}
       pair_hand_vals.push(last_card[0].numeric_value)
-      pair_hand_vals.uniq
+      @value_array = pair_hand_vals.uniq
     else
       false
     end
@@ -116,7 +139,7 @@ class Hand
       remaining_cards = @hand.select { |card| card.numeric_value != high_card}
       remaining_cards.map! { |card| card = card.numeric_value}
       remaining_cards.sort!.reverse!
-      remaining_cards.unshift(high_card)
+      @value_array = remaining_cards.unshift(high_card)
     else
       false
     end
@@ -128,21 +151,34 @@ class Hand
       @hand.each do |card|
         hand_values << card.numeric_value
       end
-
-    hand_values.sort.reverse
+    @value_array = hand_values.sort.reverse
   end
 
+  def high_card
+    return [@hand.max_by{|hand| hand.numeric_value}.numeric_value]
+  end
 
   def flush?
     color = @hand[0].suit
-    @hand.all?{|card| card.suit == color}
+    if @hand.all?{|card| card.suit == color}
+     @value_array = high_card
+    else
+      false
+    end
   end
 
   def straight?
     if self.include?(:ace)
-      return true if straight_with_ace?
+      if straight_with_ace?
+        @value_array = [4]
+        return [4]
+      end
     end
-    straight_helper
+    if straight_helper
+      @value_array = high_card
+      return @value_array
+    end
+    false
   end
 
   def straight_with_ace?
@@ -170,7 +206,11 @@ class Hand
   end
 
   def straight_flush?
-    straight? && flush?
+    if straight? && flush?
+      @value_array = high_card
+      return high_card
+    end
+    false
   end
 
   def royal_flush?
@@ -184,6 +224,9 @@ class Hand
   def include?(value)
     @hand.any? { |card| card.value == value}
   end
+
+
+
 
 
 end
