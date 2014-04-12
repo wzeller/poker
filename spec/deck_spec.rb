@@ -5,6 +5,7 @@ require 'spec_helper'
 describe Deck do
   subject(:my_deck) { Deck.new }
 
+
   describe '#cards' do
 
 
@@ -13,10 +14,11 @@ describe Deck do
     end
 
     it 'should shuffle the cards' do
-      other_deck = Deck.new
-      my_deck.shuffle!
+      unshuffled = subject.cards.dup
+      expect(unshuffled).to eq(my_deck.cards)
 
-      expect(other_deck.cards).to_not eq(my_deck.cards)
+      my_deck.shuffle!
+      expect(unshuffled).to_not eq(my_deck.cards)
     end
 
   end
@@ -32,4 +34,16 @@ describe Deck do
       expect(my_deck.cards.count).to eq(48)
     end
   end
+
+  describe '#return' do
+
+    it 'should return 2 cards after taking them' do
+      two_cards = my_deck.take!(2)
+      my_deck.return!(two_cards)
+      expect(my_deck.cards.length).to eq(52)
+    end
+  end
+
+
+
 end

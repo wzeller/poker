@@ -30,4 +30,10 @@ class Deck
     end
   end
 
+  def return!(cards)
+    cards.each do |card|
+      @cards.push card
+    end
+  end
+
 end

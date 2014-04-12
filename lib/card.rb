@@ -1,5 +1,5 @@
 NUMERIC_VALUE_HASH = { :ace => 14,
-                       :duece => 2,
+                       :deuce => 2,
                        :three => 3,
                        :four => 4,
                        :five => 5,
@@ -16,13 +16,10 @@ NUMERIC_VALUE_HASH = { :ace => 14,
 
 
 class Card
-  attr_reader :suit, :value
+  attr_accessor :suit, :value, :numeric_value
   def initialize(suit, value)
     @suit = suit
     @value = value
-  end
-
-  def numeric_value
-    NUMERIC_VALUE_HASH[self.value]
+    @numeric_value = NUMERIC_VALUE_HASH[@value]
   end
 end
