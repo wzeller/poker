@@ -1,4 +1,4 @@
-require "card.rb"
+require './card.rb'
 
 class Deck
   attr_accessor :cards
@@ -9,7 +9,7 @@ class Deck
 
   def self.new_deck
     suits = [ :hearts, :spades, :diamonds, :clubs]
-    values = [ :ace, :duece, :three, :four, :five, :six, :seven,
+    values = [ :ace, :deuce, :three, :four, :five, :six, :seven,
               :eight, :nine, :ten, :jack, :queen, :king ]
     [].tap do |cards|
       suits.each do |suit|

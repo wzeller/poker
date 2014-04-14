@@ -1,4 +1,4 @@
-require 'deck'
+require './deck.rb'
 
 
 HAND_VALUES = [ :royal_flush,
@@ -22,7 +22,7 @@ class Hand
   end
 
   def deal!
-    @hand += deck.take!(5)
+    @hand = deck.take!(5)
   end
 
   def return!(cards)
@@ -62,9 +62,6 @@ class Hand
       our_hand_value < their_hand_value
     end
   end
-
-
-
 
   def generate_card_multiples
     cards_hash = Hash.new(0)
@@ -225,8 +222,8 @@ class Hand
     @hand.any? { |card| card.value == value}
   end
 
-
-
-
-
 end
+
+test_hand = Hand.new(Deck.new)
+test_hand.deal!
+p test_hand.hand
